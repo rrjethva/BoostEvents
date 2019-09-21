@@ -9,8 +9,25 @@ var flightURL = "http://developer.goibibo.com/api/search/?app_id=" + app_id + "&
     "&seatingclass=E&adults=1&children=0&infants=0&counter=100"
 
 $.ajax({
-        url: flightURL,
-        method: "GET"
-    }).then(function (response) {
-            console.log(response)
-        }
+    url: flightURL,
+    method: "GET"
+}).then(function (response) {
+    console.log(response)
+});
+
+
+function weather(){
+
+var weatherURL = "api.openweathermap.org/data/2.5/weather?q=London"
+//49a5dfb8d316b444e3e39062f4aa7fdf
+
+$.ajax({
+    url: weatherURL,
+    method: "GET"
+}).then(function (response) {
+    console.log(response)
+})
+
+}
+weather();
+console.log("HEY");
