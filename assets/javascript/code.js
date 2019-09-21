@@ -15,19 +15,3 @@ $.ajax({
     console.log(response)
 });
 
-
-function weather(){
-
-var weatherURL = "api.openweathermap.org/data/2.5/weather?q=London"
-//49a5dfb8d316b444e3e39062f4aa7fdf
-
-$.ajax({
-    url: weatherURL,
-    method: "GET"
-}).then(function (response) {
-    console.log(response)
-})
-
-}
-weather();
-console.log("HEY");
