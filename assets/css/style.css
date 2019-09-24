@@ -1,15 +1,28 @@
 .container{ 
+    /* background-image: url(""); */
     width: 100%;
-    height: 1000px;
+    height: 100px;
     padding: 0px;
 
 }
 
+.jumbotron{
+    /* background-image: url("/assets/images/concert-crowd.jpg"); */
+    background-size: contain;
+    text-align: center;
+    height: 250px;
+}
+
+h2{
+    font-family: 'Permanent Marker', cursive;
+    font-size: 80px;
+}
+
 .left{
-    background-color: blue;
-    height: 1000px;
+    background-color: turquoise;
+    height: 500px;
 }
 .right{
-    background-color: red;
-    height: 1000px;
+    background-color: teal;
+    height: 500px;
 }
