@@ -1,9 +1,12 @@
 .container{ 
-    /* background-image: url(""); */
     width: 100%;
     height: 100px;
     padding: 0px;
 
+}
+
+.buttonArea{
+    margin-top: 35px;
 }
 
 .jumbotron{
