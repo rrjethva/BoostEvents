@@ -1,17 +1,36 @@
-var app_id = "31029c4b";
-var app_key = "498967012e2a5e3b0d4de92f26304949";
-var source;
-var destination;
-var departureDate;
 
-var flightURL = "http://developer.goibibo.com/api/search/?app_id=" + app_id + "&app_key=" + app_key +
-    "&source=" + source + "&destination=" + destination + "&dateofdeparture=" + departureDate +
-    "&seatingclass=E&adults=1&children=0&infants=0&counter=100"
+function weather() {
 
-$.ajax({
-    url: flightURL,
+  var weatherURL = "api.openweathermap.org/data/2.5/weather?q=London"
+  //49a5dfb8d316b444e3e39062f4aa7fdf
+
+  $.ajax({
+    url: weatherURL,
     method: "GET"
-}).then(function (response) {
+  }).then(function (response) {
     console.log(response)
-});
+  })
 
+}
+weather();
+console.log("HEY");
+
+
+var request = new XMLHttpRequest();
+
+request.open('GET', 'https://private-anon-b47911321b-eventbriteapiv3public.apiary-proxy.com/v3/events/search/');
+
+request.setRequestHeader('Authorization', 'Bearer HO5AZTOREHNL2RLDBLQ4  ');
+request.setRequestHeader('Content-Type', 'application/json');
+
+request.onreadystatechange = function () {
+  if (this.readyState === 4) {
+    console.log('Status:', this.status);
+    console.log('Headers:', this.getAllResponseHeaders());
+    console.log('Body:', this.responseText);
+    console.log(this.pagination.events);
+    $('#body').text("<p>" + this.responseText + "</p>");
+  }
+};
+
+request.send();
