@@ -1,39 +1,40 @@
-function weatherAPI() {
+function weatherAPI(query) {
 
-    var apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
-    var query = "London" // Temporary
-    var weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + query + "&appid=" + apiKey;
+    const apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
+    let q = query
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + q + "&appid=" + apiKey;
 
-    $.ajax({
+    const settings = {
         url: weatherURL,
         method: "GET"
-    }).then(function (response) {
+    }
+
+    $.ajax(settings).then(function (response) {
         console.log(response)
     })
+};
 
-}
+function eventBriteAPI(query, location) {
+    let q = query
+    let locationAddress = location;
 
-function eventbriteAPI() {
-    var request = new XMLHttpRequest();
+    let eventURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + q + "&location.address=" + locationAddress + "&location.within=10km";
 
-    request.open('GET', 'https://private-anon-b47911321b-eventbriteapiv3public.apiary-proxy.com/v3/events/search/');
-
-    request.setRequestHeader('Authorization', 'Bearer HO5AZTOREHNL2RLDBLQ4  ');
-    request.setRequestHeader('Content-Type', 'application/json');
-
-    request.onreadystatechange = function (response) {
-        if (this.readyState === 4) {
-            console.log('Status:', this.status);
-            console.log('Headers:', this.getAllResponseHeaders());
-            console.log('Body:', this.responseText);
-            console.log(this.responseText.events);
+    const settings = {
+        async: true,
+        sort_by: "best",
+        url: eventURL,
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer HO5AZTOREHNL2RLDBLQ4",
+        },
+        success: function (response) {
+            console.log(response);
             console.log(response.events);
-            $('#body').text("<p>" + this.responseText + "</p>");
         }
     };
 
-    request.send();
+    $.ajax(settings).then(function (response) {
+        console.log(response)
+    });
 }
-
-weatherAPI();
-eventbriteAPI();
