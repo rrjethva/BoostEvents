@@ -1,17 +1,44 @@
+
+
+
+$(".submit-btn").on("click", function (event){
+    event.preventDefault();
+   
+    if ($("#locationInput").val() === "" || $("#date").val() === "" || $("#vibeInput").val() === ""){
+        alert("Please fill in all required fields")
+    }
+    else {
+        weatherAPI();
+    }
+
+    var date = moment($("#date").val().trim()).format("L");
+    console.log("Date: " + date);
+
+    var vibe = $("#vibeInput").val().trim();
+    console.log("Vibe: " + vibe);
+});
+
+
 function weatherAPI() {
+   
 
     var apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
-    var query = "London" // Temporary
-    var weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + query + "&appid=" + apiKey;
-
+    var query = $("#locationInput").val().trim();
+    var weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + query + "&units=imperial&appid=" + apiKey;
+    
     $.ajax({
         url: weatherURL,
         method: "GET"
     }).then(function (response) {
         console.log(response)
-    })
+        console.log(query);
+        
+        var currentTemp = response.main.temp;
+        console.log("Current temp: " + currentTemp +"°F");
 
-}
+    });
+
+};
 
 function eventbriteAPI() {
     var request = new XMLHttpRequest();
@@ -33,7 +60,7 @@ function eventbriteAPI() {
     };
 
     request.send();
-}
+};
 
-weatherAPI();
-eventbriteAPI();
+//weatherAPI();
+//eventbriteAPI();
