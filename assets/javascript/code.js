@@ -4,7 +4,7 @@
 $(".submit-btn").on("click", function (event){
     event.preventDefault();
    
-    if ($("#locationInput").val() === "" || $("#date").val() === "" || $("#vibeInput").val() === ""){
+    if ($("#locationInput").val() === "" || $("#date").val() === "" || $("#").val() === ""){
         alert("Please fill in all required fields")
     }
     else {
