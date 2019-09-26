@@ -1,7 +1,21 @@
-function weatherAPI(query) {
+$(".submit-btn").on("click", function (event) {
+    event.preventDefault();
 
+    if ($("#locationInput").val() === "" || $("#date").val() === "" || $("#").val() === "") {
+        alert("Please fill in all required fields")
+    } else {
+        let date = moment($("#date").val().trim()).format("L");
+        console.log("Date: " + date);
+        
+        let vibe = $("#vibeInput").val().trim();
+        console.log("Vibe: " + vibe);
+        weatherAPI(location);
+    }
+});
+
+const weatherAPI = (location) => {
     const apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
-    let q = query
+    let q = location
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + q + "&appid=" + apiKey;
 
     const settings = {
@@ -14,7 +28,16 @@ function weatherAPI(query) {
     })
 };
 
-function eventBriteAPI(query, location) {
+const eventBriteAPI = (query, location) => {
+    
+    let event = [];
+    let name;
+    let description;
+    let startTime;
+    let endTime;
+    let url;
+    let logoURL;
+
     let q = query
     let locationAddress = location;
 
@@ -28,13 +51,23 @@ function eventBriteAPI(query, location) {
         headers: {
             "Authorization": "Bearer HO5AZTOREHNL2RLDBLQ4",
         },
-        success: function (response) {
-            console.log(response);
-            console.log(response.events);
-        }
     };
 
     $.ajax(settings).then(function (response) {
         console.log(response)
-    });
+        // for (let i = 0; i < response.events.length; i++) {
+            // event = response.events[i];
+        event = response.events[0];
+        name = event.name.text;
+        description = event.description.text;
+        startTime = event.start.local;
+        endTime = event.end.local;
+        url = event.url;
+        logoURL = event.logo.url;
+        console.log(name);
+        }
+    );
 }
+
+// weatherAPI("philadelphia")
+eventBriteAPI("beer", "philadelphia")
