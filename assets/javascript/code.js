@@ -1,3 +1,4 @@
+
 $(".submit-btn").on("click", function (event) {
     event.preventDefault();
 
@@ -13,20 +14,27 @@ $(".submit-btn").on("click", function (event) {
     }
 });
 
+
+
 const weatherAPI = (location) => {
     const apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
     let q = location
-    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + q + "&appid=" + apiKey;
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + q + "&units=imperial&appid=" + apiKey;
 
-    const settings = {
+    $.ajax({
         url: weatherURL,
         method: "GET"
-    }
-
-    $.ajax(settings).then(function (response) {
+    }).then(function (response) {
         console.log(response)
-    })
+        console.log(query);
+        
+        var currentTemp = response.main.temp;
+        console.log("Current temp: " + currentTemp +"°F");
+
+    });
+
 };
+
 
 const eventBriteAPI = (query, location) => {
     

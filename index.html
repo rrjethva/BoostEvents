@@ -16,21 +16,16 @@
 
     <!--CSS LINK-->
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
 </head>
 
 
 <body>
     <nav class="navbar navbar-light bg-light">
-        <span class="navbar-brand mb-0 h1 text-center">OUR NAME</span>
+        <span class="navbar-brand mb-0 h1 text-center">OUR NAMES</span>
 
-        <form class="evInput text-center">
-
-            <input type="text" id="eventInput" placeholder="Search Events">
-
-            <button type="submit" id="submit-btn" class="btn btn-primary"> Submit </button>
-            <button type="submit" id="submit-btn" class="btn btn-primary"> Surprise Me! </button>
-
-        </form>
+        
     </nav>
 
     <header class="jumbotron">
@@ -45,56 +40,34 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-3 left">
-
                 <form>
                     <div class="form-group">
-
-                        <div class="form-group">
-                            <label for="exampleFormControlSelect1">Set Your Vibe </label>
-                            <select class="form-control" id="exampleFormControlSelect1">
-                                <option>Surprise Me!</option>
-                                <option>Business</option>
-                                <option>Education</option>
-                                <option>Music</option>
-                                <option>Night Life</option>
-                                <option>Science & Tech</option>
-                                <option>Sports</option>
-                            </select>
+                        <div class="form-group leftForm">
+                            <label for="vibeInput">Vibe*</label>
+                            <input type="local" class="form-control rightForm" id="vibeInput" aria-describedby="Vibe"
+                                placeholder="Music">
                         </div>
 
-                        <label for="locationInput">Location</label>
-                        <input type="local" class="form-control" id="locationInput" aria-describedby="location"
-                            placeholder="Location">
+                        <label for="locationInput">Location*</label>
+                        <input type="local" class="form-control rightForm" id="locationInput" aria-describedby="location"
+                            placeholder="Philadelphia">
 
                     </div>
                     <div class="form-group">
-                        <label for="date">Date</label>
+                        <label for="date">Date*</label>
                         <input type="date" class="form-control" id="date" placeholder="date">
                     </div>
 
-                    <div class="form-group form-check">
+                    <div class="form-group form-check"></div>
 
-                    </div>
+                    <button type="submit" class="submit-btn btn-info btn-md">Submit</button>
 
-
-                    <button type="submit" class="btn btn-info">Submit</button>
-                </form>
-
-
-
-
-
+                    <p>* = required field</p>
+                </form>     
             </div>
 
             <div class="col-sm-9 right">
-
-                One of three columns
-                <div class="buttonArea">
-                    <button type="button" class="btn btn-info btn-md">All Events!</button>
-                    <button type="button" class="btn btn-info btn-md">Free! </button>
-                    <button type="button" class="btn btn-info btn-md">Concerts!</button>
-                    <button type="button" class="btn btn-info btn-md">Sports!</button>
-                    <button type="button" class="btn btn-info btn-md">Charity!</button>
+                <div class = "results">
                 </div>
 
             </div>

@@ -1,9 +1,14 @@
 .container{ 
-    /* background-image: url(""); */
-    width: 100%;
+    width: 1000px;
     height: 100px;
     padding: 0px;
+}
+.row{
+    box-shadow: 9px 12px 3px rgba(0, 0, 0, 0.2);
+}
 
+.buttonArea{
+    margin-top: 35px;
 }
 
 .jumbotron{
@@ -11,6 +16,7 @@
     background-size: contain;
     text-align: center;
     height: 250px;
+    
 }
 
 h2{
@@ -19,10 +25,23 @@ h2{
 }
 
 .left{
-    background-color: turquoise;
+    background-color: rgb(109, 119, 148);
     height: 500px;
 }
+.leftForm{
+    margin-top: 25px;
+}
 .right{
-    background-color: teal;
+    background-image: url("../images/polygon.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
     height: 500px;
+}
+.submit-btn{
+    border-radius: 5px;
+    height: 35px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    background-color: rgb(145, 140, 140);
+    border: 1px solid black;
 }
