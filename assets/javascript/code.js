@@ -1,31 +1,26 @@
 
-
-
-$(".submit-btn").on("click", function (event){
+$(".submit-btn").on("click", function (event) {
     event.preventDefault();
-   
-    if ($("#locationInput").val() === "" || $("#date").val() === "" || $("#").val() === ""){
+
+    if ($("#locationInput").val() === "" || $("#date").val() === "" || $("#").val() === "") {
         alert("Please fill in all required fields")
+    } else {
+        let date = moment($("#date").val().trim()).format("L");
+        console.log("Date: " + date);
+        
+        let vibe = $("#vibeInput").val().trim();
+        console.log("Vibe: " + vibe);
+        weatherAPI(location);
     }
-    else {
-        weatherAPI();
-    }
-
-    var date = moment($("#date").val().trim()).format("L");
-    console.log("Date: " + date);
-
-    var vibe = $("#vibeInput").val().trim();
-    console.log("Vibe: " + vibe);
 });
 
 
-function weatherAPI() {
-   
 
-    var apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
-    var query = $("#locationInput").val().trim();
-    var weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + query + "&units=imperial&appid=" + apiKey;
-    
+const weatherAPI = (location) => {
+    const apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
+    let q = location
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + q + "&units=imperial&appid=" + apiKey;
+
     $.ajax({
         url: weatherURL,
         method: "GET"
@@ -40,27 +35,47 @@ function weatherAPI() {
 
 };
 
-function eventbriteAPI() {
-    var request = new XMLHttpRequest();
 
-    request.open('GET', 'https://private-anon-b47911321b-eventbriteapiv3public.apiary-proxy.com/v3/events/search/');
+const eventBriteAPI = (query, location) => {
+    
+    let event = [];
+    let name;
+    let description;
+    let startTime;
+    let endTime;
+    let url;
+    let logoURL;
 
-    request.setRequestHeader('Authorization', 'Bearer HO5AZTOREHNL2RLDBLQ4  ');
-    request.setRequestHeader('Content-Type', 'application/json');
+    let q = query
+    let locationAddress = location;
 
-    request.onreadystatechange = function (response) {
-        if (this.readyState === 4) {
-            console.log('Status:', this.status);
-            console.log('Headers:', this.getAllResponseHeaders());
-            console.log('Body:', this.responseText);
-            console.log(this.responseText.events);
-            console.log(response.events);
-            $('#body').text("<p>" + this.responseText + "</p>");
-        }
+    let eventURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + q + "&location.address=" + locationAddress + "&location.within=10km";
+
+    const settings = {
+        async: true,
+        sort_by: "best",
+        url: eventURL,
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer HO5AZTOREHNL2RLDBLQ4",
+        },
     };
 
-    request.send();
-};
+    $.ajax(settings).then(function (response) {
+        console.log(response)
+        // for (let i = 0; i < response.events.length; i++) {
+            // event = response.events[i];
+        event = response.events[0];
+        name = event.name.text;
+        description = event.description.text;
+        startTime = event.start.local;
+        endTime = event.end.local;
+        url = event.url;
+        logoURL = event.logo.url;
+        console.log(name);
+        }
+    );
+}
 
-//weatherAPI();
-//eventbriteAPI();
+// weatherAPI("philadelphia")
+eventBriteAPI("beer", "philadelphia")
