@@ -2,6 +2,7 @@
     width: 1000px;
     height: 100px;
     padding: 0px;
+    margin-bottom: 30px;
 }
 
 .row {
@@ -50,10 +51,6 @@ h2 {
     border: 1px solid black;
 }
 
-<<<<<<< HEAD
-.card{
-    margin-top: 30px;
-=======
 .drop-down {
     float: right;
     margin-left: 10px;
@@ -61,5 +58,5 @@ h2 {
 
 .card {
     margin-top: 15px;
->>>>>>> 933a3a93a9cfa7242c7e4a91064590590d9be919
+    margin-bottom: 15px;
 }
