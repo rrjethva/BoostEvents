@@ -1,6 +1,6 @@
 let date;
 let vibe;
-let events = [];
+let results = [];
 let city;
 
 $(".submit-btn").on("click", function (event) {
@@ -13,13 +13,21 @@ $(".submit-btn").on("click", function (event) {
         vibe = $("#vibeInput").val().trim();
         city = $("#locationInput").val().trim();
 
-        console.log("Date: " + date);
-        console.log("Vibe: " + vibe);
-        console.log("Location: " + city);
-
-        weatherAPI(city);
+        // weatherAPI(city);
         eventBriteAPI(vibe, city);
-        console.log(events);
+
+        setTimeout(function () {
+            for (let i = 0; i < results.length; i++) {
+                createEventCard(results[i]);
+            }
+        }, 100);
+
+
+        $("#date").val("");
+        $("#vibeInput").val("");
+        $("#locationInput").val("");
+        $(".results").empty();
+        results = [];
     }
 });
 
@@ -47,7 +55,7 @@ const eventBriteAPI = (query, city) => {
     let eventURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + q + "&location.address=" + locationAddress + "&location.within=10km";
 
     const settings = {
-        async: true,
+        async: false,
         sort_by: "best",
         url: eventURL,
         method: "GET",
@@ -58,7 +66,7 @@ const eventBriteAPI = (query, city) => {
 
     $.ajax(settings).then(function (response) {
         console.log(response)
-        for (let i = 0; i < response.events.length; i++) {
+        for (let i = 0; i < 10; i++) {
             event = response.events[i];
 
             let eventObj = {
@@ -70,10 +78,24 @@ const eventBriteAPI = (query, city) => {
                 // TODO: Check if logo is null
                 // logoURL: event.logo.url
             };
-            events.push(eventObj);
+            results.push(eventObj);
         }
+        console.log(results);
     });
 }
 
-const createEventCard = () => {
+const createEventCard = (event) => {
+    let card = $("<div>").addClass("card");
+    let cardHead = $("<div>").addClass("card-header").text(event.name);
+
+    let cardBody = $("<div>").addClass("card-body");
+    let cardTitle = $("<h5>").addClass("card-title").text(event.startTime + " to " + event.endTime);
+    let cardText = $("<p>").addClass("card-text").text(event.description);
+    let link = $("<a>").addClass("btn btn-primary").text("Go ->");
+    link.attr("href", event.url);
+
+    cardBody.append(cardTitle, cardText, link);
+
+    card.append(cardHead, cardBody);
+    $(".results").prepend(card);
 }
