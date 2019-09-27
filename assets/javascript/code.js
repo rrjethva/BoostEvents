@@ -18,7 +18,7 @@ $(".submit-btn").on("click", function (event) {
 
         setTimeout(function () {
             for (let i = 0; i < results.length; i++) {
-                createEventCard(results[i]);
+                createEventCard(results[i], i);
             }
         }, 100);
 
@@ -30,6 +30,11 @@ $(".submit-btn").on("click", function (event) {
         results = [];
     }
 });
+
+// $(".btn-link").on("click", function () {
+//     targetID = $(this).attr("data-toggle");
+//     $(targetID).attr("class", "collapse hide");
+// });
 
 const weatherAPI = (city) => {
     const apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
@@ -84,18 +89,35 @@ const eventBriteAPI = (query, city) => {
     });
 }
 
-const createEventCard = (event) => {
+const createEventCard = (event, index) => {
     let card = $("<div>").addClass("card");
-    let cardHead = $("<div>").addClass("card-header").text(event.name);
+
+    let cardHead = $("<div>").addClass("card-header").text(event.name)
+    cardHead.attr("id", "header-" + index);
+
+    let cardHeadButton = $("<i>").addClass("material-icons drop-down").text("expand_more")
+    cardHeadButton.attr("type", "button");
+    cardHeadButton.attr("data-toggle", "collapse");
+    cardHeadButton.attr("data-target", "#event-" + index);
+    cardHeadButton.attr("aria-expanded", "true");
+    cardHeadButton.attr("aria-controls", "event-" + index);
+    cardHead.append(cardHeadButton);
+
+    let cardBodyWrapper = $("<div>").addClass("collapse show");
+    cardBodyWrapper.attr("id", "event-" + index);
+    cardBodyWrapper.attr("aria-labelledby", "header-" + index);
+    cardBodyWrapper.attr("data-parent", "#accordion-parent");
 
     let cardBody = $("<div>").addClass("card-body");
-    let cardTitle = $("<h5>").addClass("card-title").text(event.startTime + " to " + event.endTime);
+    let cardTitle = $("<h5>").addClass("card-title").text(moment(event.startTime).format("lll") + " to " + moment(event.endTime).format("lll"));
     let cardText = $("<p>").addClass("card-text").text(event.description);
     let link = $("<a>").addClass("btn btn-primary").text("Go ->");
     link.attr("href", event.url);
+    link.attr("target", "_blank");
 
     cardBody.append(cardTitle, cardText, link);
+    cardBodyWrapper.append(cardBody);
 
-    card.append(cardHead, cardBody);
-    $(".results").prepend(card);
+    card.append(cardHead, cardBodyWrapper);
+    $("#accordion-parent").append(card);
 }
