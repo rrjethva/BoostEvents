@@ -1,47 +1,60 @@
-.container{ 
+.container {
     width: 1000px;
     height: 100px;
     padding: 0px;
 }
-.row{
+
+.row {
     box-shadow: 9px 12px 3px rgba(0, 0, 0, 0.2);
 }
 
-.buttonArea{
+.buttonArea {
     margin-top: 35px;
 }
 
-.jumbotron{
+.jumbotron {
     background-image: url("../images/concert-crowd.jpg");
     background-size: contain;
     text-align: center;
     height: 250px;
-    
+
 }
 
-h2{
+h2 {
     font-family: 'Permanent Marker', cursive;
     font-size: 80px;
 }
 
-.left{
-    background-color: rgb(109, 119, 148);
+.left {
+    background-color: rgb(0, 183, 255);
     height: 500px;
 }
-.leftForm{
+
+.leftForm {
     margin-top: 25px;
 }
-.right{
+
+.right {
     background-image: url("../images/polygon.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    height: 500px;
+    height: auto;
 }
-.submit-btn{
+
+.submit-btn {
     border-radius: 5px;
     height: 35px;
     margin-top: 5px;
     margin-bottom: 15px;
     background-color: rgb(145, 140, 140);
     border: 1px solid black;
+}
+
+.drop-down {
+    float: right;
+    margin-left: 10px;
+}
+
+.card {
+    margin-top: 15px;
 }
