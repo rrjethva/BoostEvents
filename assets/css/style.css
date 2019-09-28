@@ -7,6 +7,7 @@ h2 {
     width: 1000px;
     height: 100px;
     padding: 0px;
+    margin-bottom: 30px;
 }
 
 .row {
@@ -47,5 +48,6 @@ h2 {
 }
 
 .card {
-    margin-top: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
