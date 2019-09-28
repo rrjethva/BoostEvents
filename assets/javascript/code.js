@@ -1,7 +1,6 @@
 let date;
 let vibe;
 let loc;
-let weather;
 
 $(".submit-btn").on("click", function (event) {
     event.preventDefault();
@@ -9,12 +8,11 @@ $(".submit-btn").on("click", function (event) {
     if ($("#location-input").val() === "" || $("#date-input").val() === "" || $("#vibe-input").val() === "") {
         alert("Please fill in all required fields")
     } else {
-        date = moment($("#date-input").val().trim()).format("L");
+        date = moment($("#date-input").val().trim()).format("YYYY-MM-DDThh:mm:ss");
         vibe = $("#vibe-input").val().trim();
         loc = $("#location-input").val().trim();
 
-        weather = weatherAPI(loc);
-        eventBriteAPI(vibe, loc);
+        eventBriteSearchAPI(vibe, loc, date);
 
         $("#date-input").val("");
         $("#vibe-input").val("");
@@ -24,37 +22,24 @@ $(".submit-btn").on("click", function (event) {
     }
 });
 
-const weatherAPI = (loc) => {
-    const apiKey = "49a5dfb8d316b444e3e39062f4aa7fdf"
-    let q = loc
-    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + q + "&units=imperial&appid=" + apiKey;
-
-    $.ajax({
-        url: weatherURL,
-        method: "GET"
-    }).then(function (response) {
-        console.log(response)
-        console.log(q);
-
-        var currentTemp = response.main.temp;
-        console.log("Current temp: " + currentTemp + "°F");
-    });
-};
-
-const eventBriteAPI = (query, loc) => {
+const eventBriteSearchAPI = (query, loc, date) => {
     let results = [];
-    let eventURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + query + "&location.address=" + loc + "&location.within=10km";
+    let eventSearchURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + query +
+        "&location.address=" + loc +
+        "&location.within=10km" +
+        "&start_date.range_start=" + date +
+        "&sort_by=best";
 
-    const settings = {
-        sort_by: "best",
-        url: eventURL,
+
+    const eventSearchSettings = {
+        url: eventSearchURL,
         method: "GET",
         headers: {
             "Authorization": "Bearer HO5AZTOREHNL2RLDBLQ4",
         },
     };
 
-    $.ajax(settings).then(function (response) {
+    $.ajax(eventSearchSettings).then(function (response) {
         console.log(response)
 
         for (let i = 0; i < 10; i++) {
@@ -68,7 +53,8 @@ const eventBriteAPI = (query, loc) => {
                     startTime: event.start.local,
                     endTime: event.end.local,
                     url: event.url,
-                    logoURL: event.logo.url
+                    logoURL: event.logo.url,
+                    venueID: event.venue_id
                 }
             } else {
                 eventObj = {
@@ -76,11 +62,16 @@ const eventBriteAPI = (query, loc) => {
                     description: event.description.text,
                     startTime: event.start.local,
                     endTime: event.end.local,
-                    url: event.url
+                    url: event.url,
+                    venueID: event.venue_id
                 }
-            };
+            }
+
+            eventBriteVenueAPI(event.venue_id);
+
             results.push(eventObj);
         };
+        // TODO: Sort results data by the date
 
         for (let i = 0; i < results.length; i++) {
             createEventCard(results[i], i);
@@ -88,9 +79,25 @@ const eventBriteAPI = (query, loc) => {
     });
 }
 
+const eventBriteVenueAPI = (venue_id) => {
+
+    let eventVenueURL = "https://www.eventbriteapi.com/v3/venues/" + venue_id + "/";
+
+    const eventVenueSettings = {
+        url: eventVenueURL,
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer IBJWZWCSCKANXCVUEZAY",
+        },
+    };
+
+    $.ajax(eventVenueSettings).then(function (response) {
+        console.log(response);
+    })
+}
+
 const createEventCard = (event, eventIndex) => {
     let card = $("<div>").addClass("card");
-    console.log("Test");
 
     let cardHead = $("<div>").text(event.name)
     cardHead.attr({
@@ -119,12 +126,12 @@ const createEventCard = (event, eventIndex) => {
     let cardBody = $("<div>").addClass("card-body");
     let cardTitle = $("<h5>").addClass("card-title").text(moment(event.startTime).format("lll") + " to " + moment(event.endTime).format("lll"));
     let cardText = $("<p>").addClass("card-text").text(event.description);
-    
+
     if (event.logoURL) {
         let cardImg = $("<img>").attr("src", event.logoURL);
         cardBody.append(cardImg);
     }
-        
+
     let link = $("<a>").text("Go to Page");
     link.attr({
         "class": "btn btn-primary",
