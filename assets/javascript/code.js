@@ -1,7 +1,7 @@
 let date;
 let vibe;
 let loc;
-let results = [];
+let weather;
 
 $(".submit-btn").on("click", function (event) {
     event.preventDefault();
@@ -13,14 +13,8 @@ $(".submit-btn").on("click", function (event) {
         vibe = $("#vibe-input").val().trim();
         loc = $("#location-input").val().trim();
 
-        weatherAPI(loc);
+        weather = weatherAPI(loc);
         eventBriteAPI(vibe, loc);
-
-        setTimeout(function () {
-            for (let i = 0; i < results.length; i++) {
-                createEventCard(results[i], i);
-            }
-        }, 100);
 
         $("#date-input").val("");
         $("#vibe-input").val("");
@@ -48,10 +42,8 @@ const weatherAPI = (loc) => {
 };
 
 const eventBriteAPI = (query, loc) => {
-    let q = query
-    let locationAddress = loc;
-
-    let eventURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + q + "&location.address=" + locationAddress + "&location.within=10km";
+    let results = [];
+    let eventURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + query + "&location.address=" + loc + "&location.within=10km";
 
     const settings = {
         async: false,
@@ -65,6 +57,7 @@ const eventBriteAPI = (query, loc) => {
 
     $.ajax(settings).then(function (response) {
         console.log(response)
+
         for (let i = 0; i < 10; i++) {
             event = response.events[i];
             let eventObj = {};
@@ -89,28 +82,39 @@ const eventBriteAPI = (query, loc) => {
             };
             results.push(eventObj);
         }
-        console.log(results);
+        for (let i = 0; i < results.length; i++) {
+            createEventCard(results[i], i);
+        }
     });
 }
 
-const createEventCard = (event, index) => {
+const createEventCard = (event, eventIndex) => {
     let card = $("<div>").addClass("card");
+    console.log("Test");
 
-    let cardHead = $("<div>").addClass("card-header").text(event.name)
-    cardHead.attr("id", "header-" + index);
+    let cardHead = $("<div>").text(event.name)
+    cardHead.attr({
+        "class": "card-header",
+        "id": "header-" + eventIndex
+    });
 
-    let cardHeadButton = $("<i>").addClass("material-icons drop-down").text("expand_more")
-    cardHeadButton.attr("type", "button");
-    cardHeadButton.attr("data-toggle", "collapse");
-    cardHeadButton.attr("data-target", "#event-" + index);
-    cardHeadButton.attr("aria-expanded", "true");
-    cardHeadButton.attr("aria-controls", "event-" + index);
+    let cardHeadButton = $("<i>").text("expand_more")
+    cardHeadButton.attr({
+        "class": "material-icons drop-down",
+        "type": "button",
+        "data-toggle": "collapse",
+        "data-target": "#event-" + eventIndex,
+        "aria-expanded": "true",
+        "aria-controls": "event-" + eventIndex
+    });
     cardHead.append(cardHeadButton);
 
-    let cardBodyWrapper = $("<div>").addClass("collapse hide");
-    cardBodyWrapper.attr("id", "event-" + index);
-    cardBodyWrapper.attr("aria-labelledby", "header-" + index);
-    cardBodyWrapper.attr("data-parent", "#accordion-parent");
+    let cardBodyWrapper = $("<div>").attr({
+        "class": "collapse hide",
+        "id": "event-" + eventIndex,
+        "aria-labelledby": "header-" + eventIndex,
+        "data-parent": "#accordion-parent"
+    });
 
     let cardBody = $("<div>").addClass("card-body");
     let cardTitle = $("<h5>").addClass("card-title").text(moment(event.startTime).format("lll") + " to " + moment(event.endTime).format("lll"));
@@ -121,9 +125,15 @@ const createEventCard = (event, index) => {
         cardBody.append(cardImg);
     }
         
-    let link = $("<a>").addClass("btn btn-primary").text("Go ->");
-    link.attr("href", event.url);
-    link.attr("target", "_blank");
+    let buttonWrapper = $("<div>").addClass("btn btn-primary");
+    let link = $("<a>").text("Go to Page");
+    link.attr({
+        "class": "btn btn-primary",
+        "href": event.url,
+        "target": "_blank"
+    })
+    buttonWrapper.append(link)
+    buttonWrapper.append("<i>").addClass("material-icons").text("navigate_next");
 
     cardBody.append(cardTitle, cardText, link);
     cardBodyWrapper.append(cardBody);
