@@ -1,3 +1,8 @@
+h2 {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 80px;
+}
+
 .container {
     width: 1000px;
     height: 100px;
@@ -8,30 +13,16 @@
     box-shadow: 9px 12px 3px rgba(0, 0, 0, 0.2);
 }
 
-.buttonArea {
-    margin-top: 35px;
-}
-
 .jumbotron {
     background-image: url("../images/concert-crowd.jpg");
     background-size: contain;
     text-align: center;
     height: 250px;
-
-}
-
-h2 {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 80px;
 }
 
 .left {
     background-color: rgb(0, 183, 255);
     height: 500px;
-}
-
-.leftForm {
-    margin-top: 25px;
 }
 
 .right {
