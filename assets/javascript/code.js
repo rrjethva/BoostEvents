@@ -46,7 +46,6 @@ const eventBriteAPI = (query, loc) => {
     let eventURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + query + "&location.address=" + loc + "&location.within=10km";
 
     const settings = {
-        async: false,
         sort_by: "best",
         url: eventURL,
         method: "GET",
@@ -59,8 +58,8 @@ const eventBriteAPI = (query, loc) => {
         console.log(response)
 
         for (let i = 0; i < 10; i++) {
-            event = response.events[i];
             let eventObj = {};
+            event = response.events[i];
 
             if (event.logo !== null) {
                 eventObj = {
@@ -81,10 +80,11 @@ const eventBriteAPI = (query, loc) => {
                 }
             };
             results.push(eventObj);
-        }
+        };
+
         for (let i = 0; i < results.length; i++) {
             createEventCard(results[i], i);
-        }
+        };
     });
 }
 
@@ -125,15 +125,12 @@ const createEventCard = (event, eventIndex) => {
         cardBody.append(cardImg);
     }
         
-    let buttonWrapper = $("<div>").addClass("btn btn-primary");
     let link = $("<a>").text("Go to Page");
     link.attr({
         "class": "btn btn-primary",
         "href": event.url,
         "target": "_blank"
-    })
-    buttonWrapper.append(link)
-    buttonWrapper.append("<i>").addClass("material-icons").text("navigate_next");
+    });
 
     cardBody.append(cardTitle, cardText, link);
     cardBodyWrapper.append(cardBody);
