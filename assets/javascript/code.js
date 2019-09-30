@@ -1,7 +1,8 @@
 let date;
 let vibe;
 let loc;
-let results = [];
+let eventSearchResults = [];
+let eventVenueResults = [];
 
 $(".submit-btn").on("click", function (event) {
     event.preventDefault();
@@ -19,7 +20,7 @@ $(".submit-btn").on("click", function (event) {
         $("#vibe-input").val("");
         $("#location-input").val("");
         $("#accordion-parent").empty();
-        results = [];
+        eventSearchResults = [];
     }
 });
 
@@ -65,17 +66,17 @@ const eventBriteSearchAPI = (query, loc, date) => {
                     venueId: event.venue_id,
                 }
             };
-            results.push(eventSearchObj);
+            eventSearchResults.push(eventSearchObj);
         };
 
-        for (let j = 0; j < results.length; j++) {
+        for (let j = 0; j < eventSearchResults.length; j++) {
             const venue_id = results[j].venueId;
             eventBriteVenueAPI(venue_id);
         }
-        
+
         console.log(results);
         // TODO: Sort results data by the date
-        for (let i = 0; i < results.length; i++) {
+        for (let i = 0; i < eventSearchResults.length; i++) {
             createEventCard(results[i], i);
         };
     });
@@ -93,16 +94,15 @@ const eventBriteVenueAPI = (venue_id) => {
     };
 
     $.ajax(eventVenueSettings).then(function (response) {
-        for (let i = 0; i < results.length; i++) {
-            const eventData = results[i]
-            eventData.address = response.address.address_1;
-            eventData.city = response.address.city;
-            eventData.country = response.address.country;
-            eventData.latitude = response.latitude;
-            eventData.longitude = response.longitude;
-        };
+        eventVenueResults.push({
+            address: response.address.address_1,
+            city: response.address.city,
+            country: response.address.country,
+            latitude: response.latitude,
+            longitude: response.longitude
+        });
     });
-}
+};
 
 const createEventCard = (event, eventIndex) => {
     let card = $("<div>").addClass("card");
