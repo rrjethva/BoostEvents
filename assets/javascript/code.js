@@ -3,6 +3,7 @@ let vibe;
 let loc;
 let eventSearchResults = [];
 let eventVenueResults = [];
+let completeResults = [];
 
 $(".submit-btn").on("click", function (event) {
     event.preventDefault();
@@ -69,16 +70,13 @@ const eventBriteSearchAPI = (query, loc, date) => {
             eventSearchResults.push(eventSearchObj);
         };
 
-        for (let j = 0; j < eventSearchResults.length; j++) {
-            const venue_id = results[j].venueId;
-            eventBriteVenueAPI(venue_id);
-        }
-
-        console.log(results);
-        // TODO: Sort results data by the date
         for (let i = 0; i < eventSearchResults.length; i++) {
-            createEventCard(results[i], i);
+            const eventData = eventSearchResults[i];
+            eventBriteVenueAPI(eventData.venueId);
+            createEventCard(eventData, i);
         };
+
+        // TODO: Sort results data by the date
     });
 }
 
@@ -100,6 +98,11 @@ const eventBriteVenueAPI = (venue_id) => {
             country: response.address.country,
             latitude: response.latitude,
             longitude: response.longitude
+        });
+        
+        completeResults = eventSearchResults.map(function (eventData, i) {
+            return {"event": eventData,
+                    "venue": eventVenueResults[i]};
         });
     });
 };
