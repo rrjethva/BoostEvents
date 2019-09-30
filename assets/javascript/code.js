@@ -76,6 +76,11 @@ const eventBriteSearchAPI = (query, loc, date) => {
             createEventCard(eventData, i);
         };
 
+        for (let i = 0; i < completeResults.length; i++) {
+            const _eventData = completeResults[i];
+            createMapMarker(parseInt(_eventData.latitude), parseInt(_eventData.longitude));
+        }
+
         // TODO: Sort results data by the date
     });
 }
@@ -99,10 +104,12 @@ const eventBriteVenueAPI = (venue_id) => {
             latitude: response.latitude,
             longitude: response.longitude
         });
-        
+
         completeResults = eventSearchResults.map(function (eventData, i) {
-            return {"event": eventData,
-                    "venue": eventVenueResults[i]};
+            return {
+                "event": eventData,
+                "venue": eventVenueResults[i]
+            };
         });
     });
 };
@@ -143,6 +150,11 @@ const createEventCard = (event, eventIndex) => {
         cardBody.append(cardImg);
     }
 
+    let cardMap = $("<div>").attr({
+        "class": "map",
+        "id": "map-" + eventIndex
+    });
+
     let link = $("<a>").text("Go to Page");
     link.attr({
         "class": "btn btn-primary",
@@ -150,8 +162,21 @@ const createEventCard = (event, eventIndex) => {
         "target": "_blank"
     });
 
-    cardBody.append(cardTitle, cardText, link);
+
+    cardBody.append(cardTitle, cardText, cardMap, link);
     cardBodyWrapper.append(cardBody);
     card.append(cardHead, cardBodyWrapper);
     $("#accordion-parent").append(card);
-}
+};
+
+const initMap = (lat, lng) => {
+    console.log(lat, lng)
+    var loc = { lat: lat, lng: lng };
+    var map = new google.maps.Map($("#map-1"), { zoom: 4, center: loc });
+    var marker = new google.maps.Marker({
+        position: loc,
+        map: map
+    });
+};
+
+google.maps.event.addDomListener(window, "load", initMap);
