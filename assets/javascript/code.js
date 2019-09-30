@@ -1,6 +1,7 @@
 let date;
 let vibe;
 let loc;
+let results = [];
 
 $(".submit-btn").on("click", function (event) {
     event.preventDefault();
@@ -23,13 +24,11 @@ $(".submit-btn").on("click", function (event) {
 });
 
 const eventBriteSearchAPI = (query, loc, date) => {
-    let results = [];
     let eventSearchURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + query +
         "&location.address=" + loc +
         "&location.within=10km" +
         "&start_date.range_start=" + date +
         "&sort_by=best";
-
 
     const eventSearchSettings = {
         url: eventSearchURL,
@@ -43,36 +42,39 @@ const eventBriteSearchAPI = (query, loc, date) => {
         console.log(response)
 
         for (let i = 0; i < 10; i++) {
-            let eventObj = {};
-            event = response.events[i];
+            let eventSearchObj = {};
+            const event = response.events[i];
 
             if (event.logo !== null) {
-                eventObj = {
+                eventSearchObj = {
                     name: event.name.text,
                     description: event.description.text,
                     startTime: event.start.local,
                     endTime: event.end.local,
                     url: event.url,
                     logoURL: event.logo.url,
-                    venueID: event.venue_id
+                    venueId: event.venue_id,
                 }
             } else {
-                eventObj = {
+                eventSearchObj = {
                     name: event.name.text,
                     description: event.description.text,
                     startTime: event.start.local,
                     endTime: event.end.local,
                     url: event.url,
-                    venueID: event.venue_id
+                    venueId: event.venue_id,
                 }
-            }
-
-            eventBriteVenueAPI(event.venue_id);
-
-            results.push(eventObj);
+            };
+            results.push(eventSearchObj);
         };
-        // TODO: Sort results data by the date
 
+        for (let j = 0; j < results.length; j++) {
+            const venue_id = results[j].venueId;
+            eventBriteVenueAPI(venue_id);
+        }
+        
+        console.log(results);
+        // TODO: Sort results data by the date
         for (let i = 0; i < results.length; i++) {
             createEventCard(results[i], i);
         };
@@ -80,20 +82,26 @@ const eventBriteSearchAPI = (query, loc, date) => {
 }
 
 const eventBriteVenueAPI = (venue_id) => {
-
     let eventVenueURL = "https://www.eventbriteapi.com/v3/venues/" + venue_id + "/";
 
     const eventVenueSettings = {
         url: eventVenueURL,
         method: "GET",
         headers: {
-            "Authorization": "Bearer IBJWZWCSCKANXCVUEZAY",
-        },
+            "Authorization": "Bearer IBJWZWCSCKANXCVUEZAY"
+        }
     };
 
     $.ajax(eventVenueSettings).then(function (response) {
-        console.log(response);
-    })
+        for (let i = 0; i < results.length; i++) {
+            const eventData = results[i]
+            eventData.address = response.address.address_1;
+            eventData.city = response.address.city;
+            eventData.country = response.address.country;
+            eventData.latitude = response.latitude;
+            eventData.longitude = response.longitude;
+        };
+    });
 }
 
 const createEventCard = (event, eventIndex) => {
