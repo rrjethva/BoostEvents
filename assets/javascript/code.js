@@ -124,8 +124,9 @@ const createEventCard = (event, eventIndex) => {
     });
 
     let cardBody = $("<div>").addClass("card-body");
-    let cardTitle = $("<h5>").addClass("card-title").text(moment(event.startTime).format("lll") + " to " + moment(event.endTime).format("lll"));
+    let cardTitle = $("<h5>").addClass("card-title").text(moment(event.startTime).format("lll") + " to " + moment(event.endTime).format("LT"));
     let cardText = $("<p>").addClass("card-text").text(event.description);
+    
 
     if (event.logoURL) {
         let cardImg = $("<img>").attr("src", event.logoURL);
