@@ -1,6 +1,9 @@
 let date;
 let vibe;
 let loc;
+let eventSearchResults = [];
+let eventVenueResults = [];
+let completeResults = [];
 
 $(".submit-btn").on("click", function (event) {
     event.preventDefault();
@@ -18,18 +21,16 @@ $(".submit-btn").on("click", function (event) {
         $("#vibe-input").val("");
         $("#location-input").val("");
         $("#accordion-parent").empty();
-        results = [];
+        eventSearchResults = [];
     }
 });
 
 const eventBriteSearchAPI = (query, loc, date) => {
-    let results = [];
     let eventSearchURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + query +
         "&location.address=" + loc +
         "&location.within=10km" +
         "&start_date.range_start=" + date +
         "&sort_by=best";
-
 
     const eventSearchSettings = {
         url: eventSearchURL,
@@ -43,58 +44,75 @@ const eventBriteSearchAPI = (query, loc, date) => {
         console.log(response)
 
         for (let i = 0; i < 10; i++) {
-            let eventObj = {};
-            event = response.events[i];
+            let eventSearchObj = {};
+            const event = response.events[i];
 
             if (event.logo !== null) {
-                eventObj = {
+                eventSearchObj = {
                     name: event.name.text,
                     description: event.description.text,
                     startTime: event.start.local,
                     endTime: event.end.local,
                     url: event.url,
                     logoURL: event.logo.url,
-                    venueID: event.venue_id
+                    venueId: event.venue_id,
                 }
             } else {
-                eventObj = {
+                eventSearchObj = {
                     name: event.name.text,
                     description: event.description.text,
                     startTime: event.start.local,
                     endTime: event.end.local,
                     url: event.url,
-                    venueID: event.venue_id
+                    venueId: event.venue_id,
                 }
-            }
-
-            eventBriteVenueAPI(event.venue_id);
-
-            results.push(eventObj);
+            };
+            eventSearchResults.push(eventSearchObj);
         };
+
+        for (let i = 0; i < eventSearchResults.length; i++) {
+            const eventData = eventSearchResults[i];
+            eventBriteVenueAPI(eventData.venueId);
+            createEventCard(eventData, i);
+        };
+
+        for (let i = 0; i < completeResults.length; i++) {
+            const _eventData = completeResults[i];
+            createMapMarker(parseInt(_eventData.latitude), parseInt(_eventData.longitude));
+        }
+
         // TODO: Sort results data by the date
-
-        for (let i = 0; i < results.length; i++) {
-            createEventCard(results[i], i);
-        };
     });
 }
 
 const eventBriteVenueAPI = (venue_id) => {
-
     let eventVenueURL = "https://www.eventbriteapi.com/v3/venues/" + venue_id + "/";
 
     const eventVenueSettings = {
         url: eventVenueURL,
         method: "GET",
         headers: {
-            "Authorization": "Bearer IBJWZWCSCKANXCVUEZAY",
-        },
+            "Authorization": "Bearer IBJWZWCSCKANXCVUEZAY"
+        }
     };
 
     $.ajax(eventVenueSettings).then(function (response) {
-        console.log(response);
-    })
-}
+        eventVenueResults.push({
+            address: response.address.address_1,
+            city: response.address.city,
+            country: response.address.country,
+            latitude: response.latitude,
+            longitude: response.longitude
+        });
+
+        completeResults = eventSearchResults.map(function (eventData, i) {
+            return {
+                "event": eventData,
+                "venue": eventVenueResults[i]
+            };
+        });
+    });
+};
 
 const createEventCard = (event, eventIndex) => {
     let card = $("<div>").addClass("card");
@@ -132,6 +150,11 @@ const createEventCard = (event, eventIndex) => {
         cardBody.append(cardImg);
     }
 
+    let cardMap = $("<div>").attr({
+        "class": "map",
+        "id": "map-" + eventIndex
+    });
+
     let link = $("<a>").text("Go to Page");
     link.attr({
         "class": "btn btn-primary",
@@ -139,8 +162,21 @@ const createEventCard = (event, eventIndex) => {
         "target": "_blank"
     });
 
-    cardBody.append(cardTitle, cardText, link);
+
+    cardBody.append(cardTitle, cardText, cardMap, link);
     cardBodyWrapper.append(cardBody);
     card.append(cardHead, cardBodyWrapper);
     $("#accordion-parent").append(card);
-}
+};
+
+const initMap = (lat, lng) => {
+    console.log(lat, lng)
+    var loc = { lat: lat, lng: lng };
+    var map = new google.maps.Map($("#map-1"), { zoom: 4, center: loc });
+    var marker = new google.maps.Marker({
+        position: loc,
+        map: map
+    });
+};
+
+google.maps.event.addDomListener(window, "load", initMap);
