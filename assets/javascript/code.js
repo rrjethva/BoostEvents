@@ -1,31 +1,11 @@
 let date;
 let vibe;
 let loc;
-let eventSearchResults = [];
+// let completeResults = [];
 let eventVenueResults = [];
-let completeResults = [];
+let eventSearchResults = [];
 
-$(".submit-btn").on("click", function (event) {
-    event.preventDefault();
-
-    if ($("#location-input").val() === "" || $("#date-input").val() === "" || $("#vibe-input").val() === "") {
-        alert("Please fill in all required fields")
-    } else {
-        date = moment($("#date-input").val().trim()).format("YYYY-MM-DDThh:mm:ss");
-        vibe = $("#vibe-input").val().trim();
-        loc = $("#location-input").val().trim();
-
-        eventBriteSearchAPI(vibe, loc, date);
-
-        $("#date-input").val("");
-        $("#vibe-input").val("");
-        $("#location-input").val("");
-        $("#accordion-parent").empty();
-        eventSearchResults = [];
-    }
-});
-
-const eventBriteSearchAPI = (query, loc, date) => {
+const eventBriteSearchAPI = async (query, loc, date) => {
     let eventSearchURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + query +
         "&location.address=" + loc +
         "&location.within=10km" +
@@ -40,7 +20,8 @@ const eventBriteSearchAPI = (query, loc, date) => {
         },
     };
 
-    $.ajax(eventSearchSettings).then(function (response) {
+    try {
+        const response = await $.ajax(eventSearchSettings)
         console.log(response)
 
         for (let i = 0; i < 10; i++) {
@@ -69,23 +50,13 @@ const eventBriteSearchAPI = (query, loc, date) => {
             };
             eventSearchResults.push(eventSearchObj);
         };
-
-        for (let i = 0; i < eventSearchResults.length; i++) {
-            const eventData = eventSearchResults[i];
-            eventBriteVenueAPI(eventData.venueId);
-            createEventCard(eventData, i);
-        };
-
-        for (let i = 0; i < completeResults.length; i++) {
-            const _eventData = completeResults[i];
-            createMapMarker(parseInt(_eventData.latitude), parseInt(_eventData.longitude));
-        }
-
-        // TODO: Sort results data by the date
-    });
+    } catch (error) {
+        console.log(error);
+    }
+    // TODO: Sort results data by the date
 }
 
-const eventBriteVenueAPI = (venue_id) => {
+const eventBriteVenueAPI = async (venue_id) => {
     let eventVenueURL = "https://www.eventbriteapi.com/v3/venues/" + venue_id + "/";
 
     const eventVenueSettings = {
@@ -96,7 +67,9 @@ const eventBriteVenueAPI = (venue_id) => {
         }
     };
 
-    $.ajax(eventVenueSettings).then(function (response) {
+    try {
+        const response = await $.ajax(eventVenueSettings)
+
         eventVenueResults.push({
             address: response.address.address_1,
             city: response.address.city,
@@ -105,14 +78,18 @@ const eventBriteVenueAPI = (venue_id) => {
             longitude: response.longitude
         });
 
-        completeResults = eventSearchResults.map(function (eventData, i) {
-            return {
-                "event": eventData,
-                "venue": eventVenueResults[i]
-            };
-        });
-    });
+        // completeResults = eventSearchResults.map(function (eventData, i) {
+        //     return {
+        //         "event": eventData,
+        //         "venue": eventVenueResults[i]
+        //     };
+        // });
+    } catch (error) {
+        console.log(error);
+    }
 };
+
+
 
 const createEventCard = (event, eventIndex) => {
     let card = $("<div>").addClass("card");
@@ -144,7 +121,7 @@ const createEventCard = (event, eventIndex) => {
     let cardBody = $("<div>").addClass("card-body");
     let cardTitle = $("<h5>").addClass("card-title").text(moment(event.startTime).format("lll") + " to " + moment(event.endTime).format("LT"));
     let cardText = $("<p>").addClass("card-text").text(event.description);
-    
+
 
     if (event.logoURL) {
         let cardImg = $("<img>").attr("src", event.logoURL);
@@ -163,21 +140,49 @@ const createEventCard = (event, eventIndex) => {
         "target": "_blank"
     });
 
-
     cardBody.append(cardTitle, cardText, cardMap, link);
     cardBodyWrapper.append(cardBody);
     card.append(cardHead, cardBodyWrapper);
     $("#accordion-parent").append(card);
+
+    // initMap("map-" + eventIndex, parseInt(eventVenueResults[eventIndex].latitude), parseInt(eventVenueResults[eventIndex].longitude));
 };
 
-const initMap = (lat, lng) => {
-    console.log(lat, lng)
-    var loc = { lat: lat, lng: lng };
-    var map = new google.maps.Map($("#map-1"), { zoom: 4, center: loc });
-    var marker = new google.maps.Marker({
-        position: loc,
-        map: map
-    });
-};
+$(".submit-btn").on("click", async function (event) {
+    event.preventDefault();
 
-google.maps.event.addDomListener(window, "load", initMap);
+
+    if ($("#location-input").val() === "" || $("#date-input").val() === "" || $("#vibe-input").val() === "") {
+        alert("Please fill in all required fields")
+    } else {
+        date = moment($("#date-input").val().trim()).format("YYYY-MM-DDThh:mm:ss");
+        vibe = $("#vibe-input").val().trim();
+        loc = $("#location-input").val().trim();
+
+        await eventBriteSearchAPI(vibe, loc, date);
+
+        // await createGoogleMapsScript();
+        for (let i = 0; i < eventSearchResults.length; i++) {
+            const eventData = eventSearchResults[i];
+            await eventBriteVenueAPI(eventData.venueId);
+            createEventCard(eventData, i);
+        };
+        
+        console.log(eventVenueResults);
+        for (let i = 0; i < eventVenueResults.length; i++) {
+            const eventVenue = eventVenueResults[i];
+            initMap("map-" + i, parseFloat(eventVenue.latitude), parseFloat(eventVenue.longitude));
+        }
+
+        $("#date-input").val("");
+        $("#vibe-input").val("");
+        $("#location-input").val("");
+        // $("#accordion-parent").empty();
+        eventSearchResults = [];
+    }
+});
+
+const createGoogleMapsScript = () => {
+    let googleMapsScript = $("<script>").attr("src", "https://maps.googleapis.com/maps/api/js?key=AIzaSyAXYZDR89jXI_Ml7MCaV4TskRBqkkeZ7hk&callback=createMapMarker")
+    $("body").append(googleMapsScript);
+}
