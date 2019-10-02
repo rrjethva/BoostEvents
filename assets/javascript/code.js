@@ -134,14 +134,14 @@ const createEventCard = (event, eventIndex) => {
     card.append(cardHead, cardBodyWrapper);
     $("#accordion-parent").append(card);
 
-    // initMap("map-" + eventIndex, parseInt(eventVenueResults[eventIndex].latitude), parseInt(eventVenueResults[eventIndex].longitude));
+    initMap("map-" + eventIndex, parseFloat(eventVenueResults[eventIndex].latitude), parseFloat(eventVenueResults[eventIndex].longitude));
 };
 
 $(".submit-btn").on("click", async function (event) {
     event.preventDefault();
 
     $("#accordion-parent").empty();
-    
+
     if ($("#vibe-input").val() === "" || $("#location-input").val() === "" || $("#date-input").val() === "") {
         alert("Please fill in all required fields")
     } else {
@@ -156,12 +156,6 @@ $(".submit-btn").on("click", async function (event) {
             await eventBriteVenueAPI(eventData.venueId);
             createEventCard(eventData, i);
         };
-
-        console.log(eventVenueResults);
-        for (let i = 0; i < eventVenueResults.length; i++) {
-            const eventVenue = eventVenueResults[i];
-            initMap("map-" + i, parseFloat(eventVenue.latitude), parseFloat(eventVenue.longitude));
-        }
 
         $("#vibe-input").val("");
         $("#location-input").val("");
