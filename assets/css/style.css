@@ -1,3 +1,15 @@
+body {
+    background-color: rgb(58, 128, 78);
+    background-image: url("../images/bg.jpg");
+    background-size: auto;
+    background-attachment: fixed;
+}
+
+img {
+    padding: 15px;
+    margin-left: 19%;
+}
+
 h2 {
     font-family: 'Architects Daughter', cursive;
     font-size: 105px;
@@ -9,7 +21,7 @@ h2 {
     width: 1000px;
     height: 100px;
     padding: 0px;
-    margin-bottom: 30px;    
+    margin-bottom: 30px;
 }
 
 .row {
@@ -23,21 +35,20 @@ h2 {
     background-repeat: no-repeat;
     background-position: center;
     text-align: center;
-    height: 225px;    
-        
+    height: 225px;
+
 }
 
 .left {
-    /* background-color: rgb(177, 35, 163); */
     background-image: url("../images/1216491.jpg");
     background-size: 250px 500px;
     background-repeat: no-repeat;
     height: 500px;
     color: whitesmoke;
-    font-family: 'Vibes', cursive;
+    font-family: 'Verdana', cursive;
     letter-spacing: 2px;
     font-weight: bolder;
-    font-size: 25px;
+    font-size: 16px;
     text-align: right;
 }
 
@@ -69,14 +80,14 @@ h2 {
 }
 
 .card {
-    margin-top: 20px;
-    margin-bottom: 20px;    
+    margin-bottom: 20px;
 }
 
-.vibe{
+.vibe {
     margin-top: 20px;
 }
-.card-title{
+
+.card-title {
     margin-top: 10px;
     text-align: center;
 }
@@ -86,16 +97,13 @@ h2 {
     width: 100%;
 }
 
-body {
-    background-color: rgb(58, 128, 78);
-    background-image: url("../images/bg.jpg");
-    background-size: auto;
-}
-.btn-primary{
-    margin-top: 20px;
+.btn-primary {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    float: right;
 }
 
-.card-text{
+.card-text {
     border-top: 2px solid gray;
     border-bottom: 2px solid gray;
     padding-top: 20px;
@@ -103,7 +111,23 @@ body {
     text-align: center;
 }
 
-img{
-    padding: 15px;
-    margin-left: 19%;
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

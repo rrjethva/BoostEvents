@@ -3,6 +3,7 @@ let loc;
 let date;
 let eventVenueResults = [];
 let eventSearchResults = [];
+let eventCompleteResults = [];
 
 const eventBriteSearchAPI = async (query, loc, date) => {
     let eventSearchURL = "https://www.eventbriteapi.com/v3/events/search/?q=" + query +
@@ -67,23 +68,23 @@ const eventBriteVenueAPI = async (venue_id) => {
 
     try {
         const response = await $.ajax(eventVenueSettings)
-
         eventVenueResults.push({
             address: response.address.address_1,
             city: response.address.city,
             country: response.address.country,
             latitude: response.latitude,
-            longitude: response.longitude
+            longitude: response.longitude,
+            full_address: response.address.localized_address_display
         });
     } catch (error) {
         console.log(error);
     }
 };
 
-const createEventCard = (event, eventIndex) => {
+const createEventCard = (data, eventIndex) => {
     let card = $("<div>").addClass("card");
 
-    let cardHead = $("<div>").text(event.name)
+    let cardHead = $("<div>").text(data.event.name)
     cardHead.attr({
         "class": "card-header",
         "id": "header-" + eventIndex
@@ -108,11 +109,12 @@ const createEventCard = (event, eventIndex) => {
     });
 
     let cardBody = $("<div>").addClass("card-body");
-    let cardTitle = $("<h5>").addClass("card-title").text(moment(event.startTime).format("lll") + " to " + moment(event.endTime).format("LT"));
-    let cardText = $("<p>").addClass("card-text").text(event.description);
+    let cardDate = $("<h5>").addClass("card-title").text(`${moment(data.event.startTime).format("lll")} to ${moment(data.event.endTime).format("LT")}`);
+    let cardAddress = $("<h5>").addClass("card-title").text(`${data.venue.full_address}`);
+    let cardDescription = $("<p>").addClass("card-text").text(data.event.description);
 
-    if (event.logoURL) {
-        let cardImg = $("<img>").attr("src", event.logoURL);
+    if (data.event.logoURL) {
+        let cardImg = $("<img>").attr("src", data.event.logoURL);
         cardBody.append(cardImg);
     }
 
@@ -121,14 +123,14 @@ const createEventCard = (event, eventIndex) => {
         "id": "map-" + eventIndex
     });
 
-    let link = $("<a>").text("Go to Page");
-    link.attr({
+    let cardLink = $("<a>").text("Go to Page");
+    cardLink.attr({
         "class": "btn btn-primary",
-        "href": event.url,
+        "href": data.event.url,
         "target": "_blank"
     });
 
-    cardBody.append(cardTitle, cardText, cardMap, link);
+    cardBody.append(cardDate, cardAddress, cardDescription, cardMap, cardLink);
     cardBodyWrapper.append(cardBody);
     card.append(cardHead, cardBodyWrapper);
     $("#accordion-parent").append(card);
@@ -148,18 +150,32 @@ $(".submit-btn").on("click", async function (event) {
         loc = $("#location-input").val().trim();
         date = moment($("#date-input").val().trim()).format("YYYY-MM-DDThh:mm:ss");
 
+        let loader = $("<div>").addClass("loader");
+        $("#accordion-parent").append(loader);
+
         await eventBriteSearchAPI(vibe, loc, date);
 
         for (let i = 0; i < eventSearchResults.length; i++) {
             const eventData = eventSearchResults[i];
-            await eventBriteVenueAPI(eventData.venueId);
-            createEventCard(eventData, i);
+            await eventBriteVenueAPI(eventData.venueId)
         };
 
-        $("#vibe-input").val("");
-        $("#location-input").val("");
-        $("#date-input").val("");
-        eventSearchResults = [];
-        eventVenueResults = [];
-    }
+        eventCompleteResults = eventSearchResults.map(function (eventData, i) {
+            return {"event": eventData,
+                    "venue": eventVenueResults[i]}
+        });
+
+        for (let k = 0; k < eventCompleteResults.length; k++) {
+            console.log(eventCompleteResults);
+            const data = eventCompleteResults[k];
+            createEventCard(data, k)
+        };
+        loader.remove();
+    };
+
+    $("#vibe-input").val("");
+    $("#location-input").val("");
+    $("#date-input").val("");
+    eventSearchResults = [];
+    eventVenueResults = [];
 });
