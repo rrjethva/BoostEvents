@@ -89,5 +89,6 @@ body {
     background-color: rgb(58, 128, 78);
     background-image: url("../images/bg.jpg");
     background-size: auto;
+    background-attachment: fixed;
 }
 

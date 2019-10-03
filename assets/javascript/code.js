@@ -1,6 +1,7 @@
+let date;
 let vibe;
 let loc;
-let date;
+// let completeResults = [];
 let eventVenueResults = [];
 let eventSearchResults = [];
 
@@ -21,6 +22,7 @@ const eventBriteSearchAPI = async (query, loc, date) => {
 
     try {
         const response = await $.ajax(eventSearchSettings)
+        console.log(response)
 
         for (let i = 0; i < 10; i++) {
             let eventSearchObj = {};
@@ -75,10 +77,19 @@ const eventBriteVenueAPI = async (venue_id) => {
             latitude: response.latitude,
             longitude: response.longitude
         });
+
+        // completeResults = eventSearchResults.map(function (eventData, i) {
+        //     return {
+        //         "event": eventData,
+        //         "venue": eventVenueResults[i]
+        //     };
+        // });
     } catch (error) {
         console.log(error);
     }
 };
+
+
 
 const createEventCard = (event, eventIndex) => {
     let card = $("<div>").addClass("card");
@@ -111,6 +122,7 @@ const createEventCard = (event, eventIndex) => {
     let cardTitle = $("<h5>").addClass("card-title").text(moment(event.startTime).format("lll") + " to " + moment(event.endTime).format("LT"));
     let cardText = $("<p>").addClass("card-text").text(event.description);
 
+
     if (event.logoURL) {
         let cardImg = $("<img>").attr("src", event.logoURL);
         cardBody.append(cardImg);
@@ -133,33 +145,47 @@ const createEventCard = (event, eventIndex) => {
     card.append(cardHead, cardBodyWrapper);
     $("#accordion-parent").append(card);
 
-    initMap("map-" + eventIndex, parseFloat(eventVenueResults[eventIndex].latitude), parseFloat(eventVenueResults[eventIndex].longitude));
+    // initMap("map-" + eventIndex, parseInt(eventVenueResults[eventIndex].latitude), parseInt(eventVenueResults[eventIndex].longitude));
 };
 
 $(".submit-btn").on("click", async function (event) {
     event.preventDefault();
 
-    $("#accordion-parent").empty();
 
-    if ($("#vibe-input").val() === "" || $("#location-input").val() === "" || $("#date-input").val() === "") {
+    if ($("#location-input").val() === "" || $("#date-input").val() === "" || $("#vibe-input").val() === "") {
         alert("Please fill in all required fields")
     } else {
+        date = moment($("#date-input").val().trim()).format("YYYY-MM-DDThh:mm:ss");
         vibe = $("#vibe-input").val().trim();
         loc = $("#location-input").val().trim();
-        date = moment($("#date-input").val().trim()).format("YYYY-MM-DDThh:mm:ss");
 
         await eventBriteSearchAPI(vibe, loc, date);
 
+        // await createGoogleMapsScript();
         for (let i = 0; i < eventSearchResults.length; i++) {
             const eventData = eventSearchResults[i];
             await eventBriteVenueAPI(eventData.venueId);
             createEventCard(eventData, i);
         };
 
+        console.log(eventVenueResults);
+        for (let i = 0; i < eventVenueResults.length; i++) {
+            const eventVenue = eventVenueResults[i];
+            initMap("map-" + i, parseFloat(eventVenue.latitude), parseFloat(eventVenue.longitude));
+        }
+
+        $("#date-input").val("");
         $("#vibe-input").val("");
         $("#location-input").val("");
-        $("#date-input").val("");
+        // $("#accordion-parent").empty();
         eventSearchResults = [];
-        eventVenueResults = [];
+        
     }
 });
+
+
+
+const createGoogleMapsScript = () => {
+    let googleMapsScript = $("<script>").attr("src", "https://maps.googleapis.com/maps/api/js?key=AIzaSyAXYZDR89jXI_Ml7MCaV4TskRBqkkeZ7hk&callback=createMapMarker")
+    $("body").append(googleMapsScript);
+}
