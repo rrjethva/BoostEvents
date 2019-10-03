@@ -1,14 +1,14 @@
-function initMap (id, lat, lng) {
+const initMap = (id, lat, lng) => {
     console.log(id, lat, lng);
-    var loc = {
+    let loc = {
         lat: lat,
         lng: lng
     };
-    var map = new google.maps.Map(document.getElementById(id), {
+    let map = new google.maps.Map(document.getElementById(id), {
         zoom: 15,
         center: loc
     });
-    var marker = new google.maps.Marker({
+    let marker = new google.maps.Marker({
         position: loc,
         map: map
     });

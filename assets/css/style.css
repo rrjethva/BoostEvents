@@ -78,6 +78,7 @@ h2 {
 }
 .card-title{
     margin-top: 10px;
+    text-align: center;
 }
 
 .map {
@@ -99,4 +100,10 @@ body {
     border-bottom: 2px solid gray;
     padding-top: 20px;
     padding-bottom: 20px;
+    text-align: center;
+}
+
+img{
+    padding: 15px;
+    margin-left: 19%;
 }
