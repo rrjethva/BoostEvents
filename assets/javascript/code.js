@@ -136,6 +136,21 @@ const createEventCard = (event, eventIndex) => {
     initMap("map-" + eventIndex, parseFloat(eventVenueResults[eventIndex].latitude), parseFloat(eventVenueResults[eventIndex].longitude));
 };
 
+const promise1 = (vibe, loc, date) => {
+    return new Promise((resolve, reject) => {
+        resolve(eventBriteSearchAPI(vibe, loc, date))
+        reject("EventBriteSearchAPI Failed")
+    })
+}
+
+const promise2 = (venue_id) => {
+    return new Promise((resolve, reject) => {
+        resolve(eventBriteVenueAPI(venue_id));
+        reject("EventBriteSearchAPI Failed")
+
+    })
+};
+
 $(".submit-btn").on("click", async function (event) {
     event.preventDefault();
 
@@ -146,15 +161,18 @@ $(".submit-btn").on("click", async function (event) {
     } else {
         vibe = $("#vibe-input").val().trim();
         loc = $("#location-input").val().trim();
-        date = moment($("#date-input").val().trim()).format("YYYY-MM-DDThh:mm:ss");
+        date = moment($("#date-input").val().trim()).format("YYYY-MM-DDThh:mm:ss");xcfrdexbghtvy 5
 
-        await eventBriteSearchAPI(vibe, loc, date);
+        // await eventBriteSearchAPI(vibe, loc, date);
+        promise1(vibe, loc, date).then(function() {
+            for (let i = 0; i < eventSearchResults.length; i++) {
+                const eventData = eventSearchResults[i];
+                promise2(eventData.venueId).then(function() {
+                    createEventCard(eventData, i);
+                });
+            };
+        })
 
-        for (let i = 0; i < eventSearchResults.length; i++) {
-            const eventData = eventSearchResults[i];
-            await eventBriteVenueAPI(eventData.venueId);
-            createEventCard(eventData, i);
-        };
 
         $("#vibe-input").val("");
         $("#location-input").val("");

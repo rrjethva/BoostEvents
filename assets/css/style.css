@@ -34,10 +34,10 @@ h2 {
     background-repeat: no-repeat;
     height: 500px;
     color: whitesmoke;
-    font-family: 'Vibes', cursive;
+    font-family: 'Verdana', cursive;
     letter-spacing: 2px;
     font-weight: bolder;
-    font-size: 25px;
+    font-size: 16px;
     text-align: right;
 }
 
@@ -69,7 +69,6 @@ h2 {
 }
 
 .card {
-    margin-top: 20px;
     margin-bottom: 20px;    
 }
 
