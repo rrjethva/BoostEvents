@@ -90,4 +90,13 @@ body {
     background-image: url("../images/bg.jpg");
     background-size: auto;
 }
+.btn-primary{
+    margin-top: 20px;
+}
 
+.card-text{
+    border-top: 2px solid gray;
+    border-bottom: 2px solid gray;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
