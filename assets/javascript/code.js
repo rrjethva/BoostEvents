@@ -77,13 +77,6 @@ const eventBriteVenueAPI = async (venue_id) => {
             latitude: response.latitude,
             longitude: response.longitude
         });
-
-        // completeResults = eventSearchResults.map(function (eventData, i) {
-        //     return {
-        //         "event": eventData,
-        //         "venue": eventVenueResults[i]
-        //     };
-        // });
     } catch (error) {
         console.log(error);
     }
@@ -145,7 +138,7 @@ const createEventCard = (event, eventIndex) => {
     card.append(cardHead, cardBodyWrapper);
     $("#accordion-parent").append(card);
 
-    // initMap("map-" + eventIndex, parseInt(eventVenueResults[eventIndex].latitude), parseInt(eventVenueResults[eventIndex].longitude));
+    initMap("map-" + eventIndex, parseFloat(eventVenueResults[eventIndex].latitude), parseFloat(eventVenueResults[eventIndex].longitude));
 };
 
 $(".submit-btn").on("click", async function (event) {
